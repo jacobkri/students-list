@@ -3,6 +3,7 @@
 
 <head>
     <title>The Student List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
     <link rel="StyleSheet" href="default.css">
     <script>
@@ -56,7 +57,7 @@
 
             // Add Event Handlers for Buttons
             let ui_buttons = document.getElementsByClassName("ui_button");
-            GeneralButtonHandlers(ui_buttons);
+            generalButtonHandlers(ui_buttons);
         }
 
         async function loadStudents() {
@@ -87,7 +88,7 @@
                 return json_data;
             }
         }
-        function GeneralButtonHandlers(elements) { // Event-handlers for all "ui-button" controls
+        function generalButtonHandlers(elements) { // Event-handlers for all "ui-button" controls
             let buttonClick = function () {
                 let trigger = this;
                 let data_action = trigger.getAttribute("data-action");
@@ -167,7 +168,7 @@
 
             // Re-add Event Handlers for Buttons
             let ui_buttons = document.getElementsByClassName("ui_button");
-            GeneralButtonHandlers(ui_buttons);
+            generalButtonHandlers(ui_buttons);
         }
     </script>
 </head>
