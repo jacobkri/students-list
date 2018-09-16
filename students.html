@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>The Student List</title>
+    <style type="text/css">
+    </style>
+    <link rel="StyleSheet" href="default.css">
+    <script>
+        'use strict';
+        let htmlBody;
+        /*
+                const names = [
+                    "Harry Potter",
+                    "Ron Weasley",
+                    "Hermione Granger",
+                    "Neville Longbottom",
+                    "Luna Lovegood",
+                    "Cho Chang",
+                    "Justin Finch-Fletchly",
+                    "Draco Malfoy"];
+        const houses = {
+            Gryffindor: "Gryffindor",
+            Hufflepuff: "Hufflepuff",
+            Ravenclaw: "Ravenclaw",
+            Slytherin: "Slytherin"
+        } */
+
+        // Just a few randomly assigned texts for student-details..
+        const details = ['Jeg er en fantastisk dygtig programmør.',
+            'Min store passion er design, de grimme farver og konceptudvikling.',
+            'I min lange karriere har jeg, stort set, kun beskæftiget mig med reputation manegment.',
+            'Mine HTML-koder optræder tydeligt i mit GitHub repository. Hvis der er noget du vil vide om HTML, så kan du læse det der!',
+            'Hvad vil du vide?',
+            'Der var engang en dværg som stjal min madpakke. Den store idiot!',
+            'Mit eneste krav til en arbejdsplads er, at JEG sidder i chefens lækre stol. På chefens kontor.',
+            'Mandage er ligesom alle andre dage. Kaffen smager fantastisk!!',
+            'Hvordan laver vi det næste Facebook?',
+            'Min holdning er, at jeg ikke har nogen holdning, før det er relevant at have en holdning. Hvis du har en holdning, og den ikke er relevant, så har jeg derfor ikke nogen holdning til det.',
+            'Kaffen er bedst, når jeg selv har lavet den. Pas dit arbejde!',
+            'Synes du ikke det er spild at tid at læse opdigtede detaljer om dine elever eller medstuderende?',
+            'Denne beskrivelse er fuldstendigt opdigtet.',
+            'Der er en ting som er sikkert om mig: Jeg har ikke selv skrevet denne beskrivelse.'];
+        const dCount = details.length; // Count number of detail-texts in the "details" array
+
+        const json_file = 'frontenders2018.json';
+        let names;
+
+        const Student_template = {
+            firstName: "",
+            lastName: "",
+            toString() {
+                return this.firstName + ' ' + this.lastName;
+            },
+            splitName(str) {
+                let result = str.match(/([^0-9 ]+) ([^0-9]+)/i); // Accept everything execpt numbers (I.e. some people have dashes in their names)
+                // result[0] = Whole string
+                this.firstName = result[1]; // First name
+                this.lastName = result[2]; // Middle + Last Name
+                let iRand = Math.floor((Math.random() * dCount));
+                this.details = details[iRand]; // Details
+            }
+        }
+        const students = []; // Array of student Objects
+
+        // ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+        // init()-------->
+        // _______________
+        window.addEventListener("DOMContentLoaded", init);
+
+        async function init() {
+            htmlBody = document.querySelector("body");
+            names = await loadJson(json_file);
+            // console.log(names);
+            loadStudents(); // Loads students into "objects" array
+
+            // Add Event Handlers for Buttons
+            let ui_buttons = document.getElementsByClassName("ui_button");
+            GeneralButtonHandlers(ui_buttons);
+        }
+
+        async function loadStudents() {
+            // Load students into "objects" array from loaded .json file
+            let htmlTable = '';
+            let i = 0;
+
+            names.forEach(element => { // Array of fullname strings
+                const student = Object.create(Student_template); // Create new student object
+                student.splitName(element); // Split the fullname into .firstName and .lastName properties
+
+                // console.log(element);
+                students[i] = student;
+                htmlTable = htmlTable + '<tr id="student' + i + '"><td>' + student.toString() + '</td><td><button data-action="studentRemove" data-id="' + i + '" class="ui_button">Remove</button> <button data-action="studentDetails" data-id="' + i + '" class="ui_button">Details</button></td></tr>';
+                ++i;
+            });
+            // console.table(students);
+            document.querySelector('#main').innerHTML += '<table id="studentList">' + htmlTable + '</table>';
+        }
+        async function loadJson(JSON_URL) {
+            // Load json into jsonObject, then save it in wp_data for later use
+            let jsonObject = await fetch(JSON_URL);
+            let json_data = await jsonObject.json();
+
+            if (json_data.length < 1) {
+                return false;
+            } else {
+                return json_data;
+            }
+        }
+        function GeneralButtonHandlers(elements) { // Event-handlers for all "ui-button" controls
+            let buttonClick = function () {
+                let trigger = this;
+                let data_action = trigger.getAttribute("data-action");
+                let data_id = trigger.getAttribute("data-id");
+
+                // Functions for buttonHandlers
+                let dkFuncs = {
+                    studentDetails: function () {
+                        if (!document.querySelector("#detailsWindow")) { // Only allow one #detailsWindow on the page
+                            console.log('Note: Attempt to show student ID: ' + data_id + ' details.');
+                            let studentDetailsWindow = document.createElement('div'); // Let's try to do this with DOM instead of innerHTML for a change!
+                            let closeButton = document.createElement('button');
+                            closeButton.innerHTML = '✖';
+                            studentDetailsWindow.id = 'detailsWindow';
+                            studentDetailsWindow.innerHTML = '<h1>' + students[data_id].toString() + '</h1><p>' + students[data_id].details + '</p>';
+                            studentDetailsWindow.appendChild(closeButton);
+                            // <button data-action="closeWindow" class="ui-button">✖</button>';
+                            closeButton.addEventListener("click", closeWindow, false);
+                            document.body.appendChild(studentDetailsWindow); // Append the element to <body>
+                            document.querySelector("#main").className = "blur";
+                            document.querySelector("#detailsWindow").className = "fadeIn";
+                        } else {
+                            console.log('Error: Only one #detailsWindow is allowed at a time.'); // At this point, the user must be messing around...
+                        }
+
+                    },
+                    studentRemove: function () {
+                        console.log('Note: Attempt to remove student ID: ' + data_id + ' from the list.');
+                        delete students[data_id];
+                        document.querySelector('#student' + data_id).remove();
+                    },
+                    studentsByLastname: function () {
+                        // alert('dd');
+                        students.sort(sortByLastName);
+                        studentsTableRefresh();
+                        // console.table(students);
+                    },
+                    studentsByFirstname: function () {
+                        // alert('dd');
+                        students.sort();
+                        studentsTableRefresh();
+                        // console.table(students);
+                    }
+                };
+                dkFuncs[data_action](trigger);
+            };
+            function closeWindow() { // I wanted to include this in dkFuncs, but then I need to re-apply all event handlers, which seems inefficient.. Suggestions?
+                console.log('Note: Atempt to close #detailsWindow');
+                setTimeout(function () {
+                    document.querySelector('#detailsWindow').remove();
+                }, 2000);
+                document.querySelector("#detailsWindow").className = "fadeOut";
+                document.querySelector("#main").className += " deBlur";
+            }
+            function sortByLastName(a, b) {
+                if (a.lastName < b.lastName) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+            function studentsTableRefresh() {
+                let htmlTable = '';
+                let i = 0;
+                students.forEach(element => {
+                    if (element !== false) {
+                        htmlTable = htmlTable + '<tr id="student' + i + '"><td>' + element.toString() + '</td><td><button data-action="studentRemove" data-id="' + i + '" class="ui_button">Remove</button> <button data-action="studentDetails" data-id="' + i + '" class="ui_button">Details</button></td></tr>';
+                    }
+                    ++i;
+                });
+                document.querySelector("#studentList").innerHTML = htmlTable;
+
+                // Re-add Event Handlers for Buttons
+                let ui_buttons = document.getElementsByClassName("ui_button");
+                GeneralButtonHandlers(ui_buttons);
+            }
+            for (let i = 0; i < elements.length; i++) { // Apply event handlers dynamically. Avoids having to do it manually every time we add a new button..
+                elements[i].addEventListener('click', buttonClick, false);
+                // elements[i].preventDefault();
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <p>Sort by:</p>
+        <button data-action="studentsByLastname" class="ui_button">Lastname</button>
+        <button data-action="studentsByFirstname" class="ui_button">Firstname</button>
+    </div>
+    <article id="main">
+        <h1>Students List</h1>
+    </article>
+</body>
+
+</html>
