@@ -134,51 +134,51 @@
                 };
                 dkFuncs[data_action](trigger);
             };
-            function closeWindow() { // I wanted to include this in dkFuncs, but then I need to re-apply all event handlers, which seems inefficient.. Suggestions?
-                console.log('Note: Atempt to close #detailsWindow');
-                setTimeout(function () {
-                    document.querySelector('#detailsWindow').remove();
-                }, 2000);
-                document.querySelector("#detailsWindow").className = "fadeOut";
-                document.querySelector("#main").className += " deBlur";
-            }
-            function sortByLastName(a, b) {
-                if (a.lastName < b.lastName) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-            function studentsTableRefresh() {
-                let htmlTable = '';
-                let i = 0;
-                students.forEach(element => {
-                    if (element !== false) {
-                        htmlTable = htmlTable + '<tr id="student' + i + '"><td>' + element.toString() + '</td><td><button data-action="studentRemove" data-id="' + i + '" class="ui_button">Remove</button> <button data-action="studentDetails" data-id="' + i + '" class="ui_button">Details</button></td></tr>';
-                    }
-                    ++i;
-                });
-                document.querySelector("#studentList").innerHTML = htmlTable;
-
-                // Re-add Event Handlers for Buttons
-                let ui_buttons = document.getElementsByClassName("ui_button");
-                GeneralButtonHandlers(ui_buttons);
-            }
             for (let i = 0; i < elements.length; i++) { // Apply event handlers dynamically. Avoids having to do it manually every time we add a new button..
                 elements[i].addEventListener('click', buttonClick, false);
                 // elements[i].preventDefault();
             }
         }
+        function closeWindow() { // I wanted to include this in dkFuncs, but then I need to re-apply all event handlers, which seems inefficient.. Suggestions?
+            console.log('Note: Atempt to close #detailsWindow');
+            setTimeout(function () {
+                document.querySelector('#detailsWindow').remove();
+            }, 2000);
+            document.querySelector("#detailsWindow").className = "fadeOut";
+            document.querySelector("#main").className += " deBlur";
+        }
+        function sortByLastName(a, b) {
+            if (a.lastName < b.lastName) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+        function studentsTableRefresh() {
+            let htmlTable = '';
+            let i = 0;
+            students.forEach(element => {
+                if (element !== false) {
+                    htmlTable = htmlTable + '<tr id="student' + i + '"><td>' + element.toString() + '</td><td><button data-action="studentRemove" data-id="' + i + '" class="ui_button">Remove</button> <button data-action="studentDetails" data-id="' + i + '" class="ui_button">Details</button></td></tr>';
+                }
+                ++i;
+            });
+            document.querySelector("#studentList").innerHTML = htmlTable;
+
+            // Re-add Event Handlers for Buttons
+            let ui_buttons = document.getElementsByClassName("ui_button");
+            GeneralButtonHandlers(ui_buttons);
+        }
     </script>
 </head>
 
 <body>
-    <div>
-        <p>Sort by:</p>
-        <button data-action="studentsByLastname" class="ui_button">Lastname</button>
-        <button data-action="studentsByFirstname" class="ui_button">Firstname</button>
-    </div>
     <article id="main">
+        <header>
+            <p>Sort by:</p>
+            <button data-action="studentsByLastname" class="ui_button">Lastname</button>
+            <button data-action="studentsByFirstname" class="ui_button">Firstname</button>
+        </header>
         <h1>Students List</h1>
     </article>
 </body>
