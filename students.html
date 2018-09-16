@@ -3,29 +3,10 @@
 
 <head>
     <title>The Student List</title>
-    <style type="text/css">
-    </style>
+    <meta name="robots" content="noindex">
     <link rel="StyleSheet" href="default.css">
     <script>
         'use strict';
-        let htmlBody;
-        /*
-                const names = [
-                    "Harry Potter",
-                    "Ron Weasley",
-                    "Hermione Granger",
-                    "Neville Longbottom",
-                    "Luna Lovegood",
-                    "Cho Chang",
-                    "Justin Finch-Fletchly",
-                    "Draco Malfoy"];
-        const houses = {
-            Gryffindor: "Gryffindor",
-            Hufflepuff: "Hufflepuff",
-            Ravenclaw: "Ravenclaw",
-            Slytherin: "Slytherin"
-        } */
-
         // Just a few randomly assigned texts for student-details..
         const details = ['Jeg er en fantastisk dygtig programmør.',
             'Min store passion er design, de grimme farver og konceptudvikling.',
@@ -69,7 +50,6 @@
         window.addEventListener("DOMContentLoaded", init);
 
         async function init() {
-            htmlBody = document.querySelector("body");
             names = await loadJson(json_file);
             // console.log(names);
             loadStudents(); // Loads students into "objects" array
